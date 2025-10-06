@@ -2,6 +2,7 @@ from .input_ksdd import KSDDDataset
 from .input_dagm import DagmDataset
 from .input_steel import SteelDataset
 from .input_ksdd2 import KSDD2Dataset
+from .input_mvteccapsule import MVTecCapsuleDataset
 from config import Config
 from torch.utils.data import DataLoader
 from typing import Optional
@@ -20,6 +21,8 @@ def get_dataset(kind: str, cfg: Config) -> Optional[DataLoader]:
         ds = SteelDataset(kind, cfg)
     elif cfg.DATASET == "KSDD2":
         ds = KSDD2Dataset(kind, cfg)
+    elif cfg.DATASET == "MVTecCapsule":
+        ds = MVTecCapsuleDataset(kind, cfg)
     else:
         raise Exception(f"Unknown dataset {cfg.DATASET}")
 

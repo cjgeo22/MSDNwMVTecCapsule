@@ -333,7 +333,20 @@ class End2End:
         return nn.BCEWithLogitsLoss(reduction=reduction).to(self._get_device())
 
     def _get_device(self):
-        return f"cuda:{self.cfg.GPU}"
+        """
+        Return a valid torch device string.
+        - CPU if --GPU < 0 or CUDA is unavailable
+        - Otherwise the requested CUDA device (e.g., "cuda:0")
+        """
+        try:
+            gpu = int(getattr(self.cfg, "GPU", -1))
+        except Exception:
+            gpu = -1
+
+        if gpu < 0 or not torch.cuda.is_available():
+            return "cpu"
+        return f"cuda:{gpu}"
+
 
     def _set_results_path(self):
         self.run_name = f"{self.cfg.RUN_NAME}_FOLD_{self.cfg.FOLD}" if self.cfg.DATASET in ["KSDD", "DAGM"] else self.cfg.RUN_NAME

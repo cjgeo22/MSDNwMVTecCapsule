@@ -90,6 +90,19 @@ class Config:
             self.INPUT_CHANNELS = 3
             if self.NUM_SEGMENTED is None:
                 raise Exception("Missing NUM_SEGMENTED for KSDD2 dataset!")
+        elif self.DATASET == "MVTecCapsule":
+            # Relative subdirs under --DATASET_PATH
+            self.IMAGES_DIR  = getattr(self, "IMAGES_DIR",  "images")
+            self.MASKS_DIR   = getattr(self, "MASKS_DIR",   "masks")
+            self.SPLIT_TRAIN = getattr(self, "SPLIT_TRAIN", "splits/MVTecCapsule/train.txt")
+            self.SPLIT_SEGMENTED_TRAIN = getattr(self, "SPLIT_SEGMENTED_TRAIN", "splits/MVTecCapsule/segmented_train.txt")
+            self.SPLIT_TEST  = getattr(self, "SPLIT_TEST",  "splits/MVTecCapsule/test.txt")
+
+            # *** ensure model sizes are concrete integers ***
+            if self.INPUT_WIDTH is None:    self.INPUT_WIDTH = 512
+            if self.INPUT_HEIGHT is None:   self.INPUT_HEIGHT = 512
+            if self.INPUT_CHANNELS is None: self.INPUT_CHANNELS = 1   # use 3 if you want RGB
+
         else:
             raise Exception('Unknown dataset {}'.format(self.DATASET))
 

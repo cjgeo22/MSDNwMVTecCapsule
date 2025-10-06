@@ -100,12 +100,27 @@ class Dataset(torch.utils.data.Dataset):
         return np.array(img, dtype=np.float32) / 255.0
 
     def read_label_resize(self, path, resize_dim, dilate=None) -> (np.ndarray, bool):
+        """
+        Read a label mask and resize it. Robust to resize_dim being an int or a (W,H) tuple.
+        Uses INTER_NEAREST for labels to avoid fractional classes.
+        """
         lbl = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        if lbl is None:
+            raise FileNotFoundError(f"Label mask not found or unreadable: {path}")
+
         if dilate is not None and dilate > 1:
             lbl = cv2.dilate(lbl, np.ones((dilate, dilate)))
+
         if resize_dim is not None:
-            lbl = cv2.resize(lbl, dsize=resize_dim)
+            if isinstance(resize_dim, (tuple, list)):
+                dsize = (int(resize_dim[0]), int(resize_dim[1]))  # (W, H)
+            else:
+                s = int(resize_dim)
+                dsize = (s, s)
+            lbl = cv2.resize(lbl, dsize=dsize, interpolation=cv2.INTER_NEAREST)
+
         return np.array((lbl / 255.0), dtype=np.float32), np.max(lbl) > 0
+
 
     def to_tensor(self, x) -> torch.Tensor:
         if x.dtype != np.float32:

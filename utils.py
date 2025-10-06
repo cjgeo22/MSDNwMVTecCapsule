@@ -20,10 +20,10 @@ def create_folder(folder, exist_ok=True):
 
 
 def calc_confusion_mat(D, Y):
-    FP = (D != Y) & (Y.astype(np.bool) == False)
-    FN = (D != Y) & (Y.astype(np.bool) == True)
-    TN = (D == Y) & (Y.astype(np.bool) == False)
-    TP = (D == Y) & (Y.astype(np.bool) == True)
+    FP = (D != Y) & (Y.astype(bool) == False)
+    FN = (D != Y) & (Y.astype(bool) == True)
+    TN = (D == Y) & (Y.astype(bool) == False)
+    TP = (D == Y) & (Y.astype(bool) == True)
 
     return FP, FN, TN, TP
 
